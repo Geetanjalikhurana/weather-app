@@ -8,6 +8,7 @@ import "./App.css";
 
 // Fix marker
 delete L.Icon.Default.prototype._getIconUrl;
+
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
   iconUrl: require("leaflet/dist/images/marker-icon.png"),
@@ -19,8 +20,8 @@ function ChangeMapView({ coords }) {
   const map = useMap();
 
   useEffect(() => {
-  map.flyTo(coords, 12, { duration: 2 });
-}, [coords, map]);
+    map.flyTo(coords, 12, { duration: 2 });
+  }, [coords, map]);
 
   return null;
 }
@@ -33,20 +34,14 @@ function App() {
 
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
 
-  useEffect(() => {
-  if (transcript) {
-    setCity(transcript);
-    getWeather(transcript);
-    resetTranscript();
-  }
-},[transcript, resetTranscript, getWeather]);
-
+  // WEATHER FUNCTION
   const getWeather = async (cityName = city) => {
     try {
       // CURRENT WEATHER
       const res = await axios.get(
         `http://localhost:8080/temperature?city=${cityName}`
       );
+
       setWeather(res.data);
 
       // FORECAST
@@ -61,6 +56,7 @@ function App() {
 
       // MAP
       const API_KEY = "8453df9fa77f5af207e4c57784ca7e18";
+
       const geo = await axios.get(
         `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${API_KEY}`
       );
@@ -74,6 +70,15 @@ function App() {
     }
   };
 
+  // VOICE SEARCH
+  useEffect(() => {
+    if (transcript) {
+      setCity(transcript);
+      getWeather(transcript);
+      resetTranscript();
+    }
+  }, [transcript, resetTranscript]);
+
   return (
     <div className="app">
 
@@ -81,6 +86,7 @@ function App() {
 
       {/* SEARCH */}
       <div className="search-box">
+
         <input
           placeholder="Enter city"
           value={city}
@@ -94,12 +100,15 @@ function App() {
         <button onClick={() => SpeechRecognition.startListening()}>
           {listening ? "🎙️" : "🎤"}
         </button>
+
       </div>
 
       {/* CURRENT WEATHER */}
       {weather && weather.main && (
         <div className="weather-card">
+
           <h2>{weather.main.temp}°C</h2>
+
           <p>{weather.weather[0].description}</p>
 
           <div className="grid">
@@ -108,27 +117,44 @@ function App() {
             <div>🧭 {weather.main.pressure}</div>
             <div>🌬 {weather.wind.speed} m/s</div>
           </div>
+
         </div>
       )}
 
-      {/* 7 DAY FORECAST */}
+      {/* FORECAST */}
       <div className="forecast">
+
         {forecast.map((day, i) => (
           <div key={i} className="day-card">
+
             <p>{new Date(day.dt_txt).toDateString()}</p>
+
             <p>{day.main.temp}°C</p>
+
             <p>{day.weather[0].main}</p>
+
           </div>
         ))}
+
       </div>
 
       {/* MAP */}
-      <MapContainer center={coords} zoom={10} style={{ height: "300px" }}>
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      <MapContainer
+        center={coords}
+        zoom={10}
+        style={{ height: "300px" }}
+      >
+
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+
         <ChangeMapView coords={coords} />
+
         <Marker position={coords}>
           <Popup>{city}</Popup>
         </Marker>
+
       </MapContainer>
 
     </div>
