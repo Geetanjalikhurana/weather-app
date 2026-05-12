@@ -39,7 +39,7 @@ function App() {
     getWeather(transcript);
     resetTranscript();
   }
-}, [}, [transcript, resetTranscript, getWeather]);
+},[transcript, resetTranscript, getWeather]);
 
   const getWeather = async (cityName = city) => {
     try {
