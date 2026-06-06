@@ -30,10 +30,21 @@ function App() {
 
       const weatherData = await weatherResponse.json();
 
-      if (
+    if (
   weatherData.cod !== 200 ||
   weatherData.name.toLowerCase() !== searchCity.toLowerCase()
 ) {
+  setWeather(null);
+  setForecast([]);
+  alert("City not found");
+  return;
+}
+      if (
+  !weatherData.coord ||
+  weatherData.name.toLowerCase() !== searchCity.toLowerCase()
+) {
+  setWeather(null);
+  setForecast([]);
   alert("City not found");
   return;
 }
