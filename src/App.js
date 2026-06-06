@@ -1,165 +1,128 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
 import "./App.css";
-
-// Fix marker
-delete L.Icon.Default.prototype._getIconUrl;
-
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-  iconUrl: require("leaflet/dist/images/marker-icon.png"),
-  shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
-});
-
-// Map auto move
-function ChangeMapView({ coords }) {
-  const map = useMap();
-
-  useEffect(() => {
-    map.flyTo(coords, 12, { duration: 2 });
-  }, [coords, map]);
-
-  return null;
-}
+import React, { useState, useEffect, useCallback } from "react";
 
 function App() {
   const [city, setCity] = useState("");
   const [weather, setWeather] = useState(null);
   const [forecast, setForecast] = useState([]);
-  const [coords, setCoords] = useState([28.61, 77.23]);
 
-  const { transcript, listening, resetTranscript } = useSpeechRecognition();
+  const API_KEY = "8453df9fa77f5af207e4c57784ca7e18";
 
-  // WEATHER FUNCTION
-  const getWeather = async (cityName = city) => {
-    try {
-      // CURRENT WEATHER
-      const res = await axios.get(
-        `http://localhost:8080/temperature?city=${cityName}`
-      );
+  const startVoiceSearch = () => {
+    const recognition = new window.webkitSpeechRecognition();
 
-      setWeather(res.data);
+    recognition.onresult = async (event) => {
+      const voiceCity = event.results[0][0].transcript;
+      setCity(voiceCity);
+      fetchWeather(voiceCity);
+    };
 
-      // FORECAST
-      const f = await axios.get(
-        `http://localhost:8080/forecast?city=${cityName}`
-      );
-
-      if (f.data && f.data.list) {
-        const daily = f.data.list.filter((_, i) => i % 8 === 0);
-        setForecast(daily);
-      }
-
-      // MAP
-      const API_KEY = "8453df9fa77f5af207e4c57784ca7e18";
-
-      const geo = await axios.get(
-        `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${API_KEY}`
-      );
-
-      if (geo.data.length > 0) {
-        setCoords([geo.data[0].lat, geo.data[0].lon]);
-      }
-
-    } catch (err) {
-      console.log(err);
-    }
+    recognition.start();
   };
 
-  // VOICE SEARCH
-  useEffect(() => {
-    if (transcript) {
-      setCity(transcript);
-      getWeather(transcript);
-      resetTranscript();
+  const fetchWeather = useCallback(async (searchCity = city) => {
+    try {
+      const weatherResponse = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${searchCity}&appid=${API_KEY}&units=metric`
+      );
+
+      const weatherData = await weatherResponse.json();
+
+      if (weatherData.cod !== 200) {
+        alert("City not found");
+        return;
+      }
+
+      setWeather(weatherData);
+
+      const forecastResponse = await fetch(
+        `https://api.openweathermap.org/data/2.5/forecast?q=${searchCity}&appid=${API_KEY}&units=metric`
+      );
+
+      const forecastData = await forecastResponse.json();
+
+      const dailyForecast = forecastData.list.filter((item) =>
+        item.dt_txt.includes("12:00:00")
+      );
+
+      setForecast(dailyForecast.slice(0, 7));
+    } catch (error) {
+      console.log(error);
     }
-  }, [transcript, resetTranscript]);
+  }, [city]);
+
+  useEffect(() => {
+    fetchWeather();
+  }, [fetchWeather]);
 
   return (
-    <div className="app">
+    <div className="App">
+      <h1>WeatherNova</h1>
 
-      <h1>🌤 WeatherNova</h1>
-
-      {/* SEARCH */}
       <div className="search-box">
-
         <input
+          type="text"
           placeholder="Enter city"
           value={city}
           onChange={(e) => setCity(e.target.value)}
         />
 
-        <button onClick={() => getWeather()}>
+        <button onClick={() => fetchWeather()}>
           Search
         </button>
 
-        <button onClick={() => SpeechRecognition.startListening()}>
-          {listening ? "🎙️" : "🎤"}
+        <button className="voice-btn" onClick={startVoiceSearch}>
+          🎤
         </button>
-
       </div>
 
-      {/* CURRENT WEATHER */}
-      {weather && weather.main && (
+      {weather && (
         <div className="weather-card">
-
-          <h2>{weather.main.temp}°C</h2>
-
+          <h2>{weather.name}</h2>
+          <h3>{weather.main.temp}°C</h3>
           <p>{weather.weather[0].description}</p>
-
-          <div className="grid">
-            <div>🌡 {weather.main.feels_like}°C</div>
-            <div>💧 {weather.main.humidity}%</div>
-            <div>🧭 {weather.main.pressure}</div>
-            <div>🌬 {weather.wind.speed} m/s</div>
-          </div>
-
+          <p>Humidity: {weather.main.humidity}%</p>
+          <p>Wind: {weather.wind.speed} m/s</p>
         </div>
       )}
 
-      {/* FORECAST */}
-      <div className="forecast">
+      {forecast.length > 0 && (
+        <div>
+          <h2 className="forecast-title">7-Day Forecast</h2>
 
-        {forecast.map((day, i) => (
-          <div key={i} className="day-card">
+          <div className="forecast-container">
+            {forecast.map((day, index) => (
+              <div className="forecast-card" key={index}>
+                <h3>
+                  {new Date(day.dt_txt).toLocaleDateString("en-US", {
+                    weekday: "short",
+                  })}
+                </h3>
 
-            <p>{new Date(day.dt_txt).toDateString()}</p>
-
-            <p>{day.main.temp}°C</p>
-
-            <p>{day.weather[0].main}</p>
-
+                <p>{day.main.temp}°C</p>
+                <p>{day.weather[0].main}</p>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+      )}
 
-      </div>
+      {weather && (
+        <div className="map-container">
+          <h2>Weather Map</h2>
 
-      {/* MAP */}
-      <MapContainer
-        center={coords}
-        zoom={10}
-        style={{ height: "300px" }}
-      >
-
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-
-        <ChangeMapView coords={coords} />
-
-        <Marker position={coords}>
-          <Popup>{city}</Popup>
-        </Marker>
-
-      </MapContainer>
-
+          <iframe
+            title="weather-map"
+            width="100%"
+            height="350"
+            frameBorder="0"
+            src={`https://maps.google.com/maps?q=${weather.name}&t=&z=10&ie=UTF8&iwloc=&output=embed`}
+            allowFullScreen
+          ></iframe>
+        </div>
+      )}
     </div>
   );
 }
 
 export default App;
-// updated
