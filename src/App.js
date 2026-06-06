@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 
 function App() {
   const [city, setCity] = useState("");
@@ -21,6 +21,8 @@ function App() {
   };
 
   const fetchWeather = useCallback(async (searchCity = city) => {
+    if (searchCity.trim() === "") return;
+
     try {
       const weatherResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${searchCity}&appid=${API_KEY}&units=metric`
@@ -50,10 +52,6 @@ function App() {
       console.log(error);
     }
   }, [city]);
-
-  useEffect(() => {
-    fetchWeather();
-  }, [fetchWeather]);
 
   return (
     <div className="App">
