@@ -1,70 +1,222 @@
-# Getting Started with Create React App
+# 🌦️ WeatherNova
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+WeatherNova is a Full Stack Weather Forecast Application that provides real-time weather information for any city using a modern, responsive user interface. The application integrates a React.js frontend with a Java Spring Boot backend and fetches live weather data through a REST API.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 📌 Features
 
-### `npm start`
+- 🌍 Search weather by city name
+- 🌡️ Display current temperature
+- 💧 Humidity information
+- 🌬️ Wind speed
+- ☁️ Weather condition and description
+- 📱 Responsive design for desktop and mobile
+- ⚡ Fast API response
+- ❌ Error handling for invalid city names
+- 🔄 REST API integration
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🛠️ Tech Stack
 
-### `npm test`
+### Frontend
+- React.js
+- HTML5
+- CSS3
+- JavaScript
+- Bootstrap
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Backend
+- Java
+- Spring Boot
+- Maven
 
-### `npm run build`
+### API
+- OpenWeatherMap API
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Tools
+- Git
+- GitHub
+- VS Code
+- IntelliJ IDEA
+- Postman
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 📂 Project Structure
 
-### `npm run eject`
+```
+WeatherNova/
+│
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── README.md
+│
+├── backend/
+│   ├── src/main/java/
+│   ├── src/main/resources/
+│   ├── pom.xml
+│   └── application.properties
+│
+└── README.md
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## ⚙️ Installation
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Clone Repository
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+git clone https://github.com/yourusername/WeatherNova.git
+```
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Frontend Setup
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+cd frontend
+npm install
+npm start
+```
 
-### Code Splitting
+Frontend runs at
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```
+http://localhost:3000
+```
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Backend Setup
 
-### Making a Progressive Web App
+```bash
+cd backend
+mvn clean install
+mvn spring-boot:run
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Backend runs at
 
-### Advanced Configuration
+```
+http://localhost:8080
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## 🔑 Configure API Key
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Create an account on OpenWeatherMap and generate an API Key.
 
-### `npm run build` fails to minify
+Add your API key in
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```
+application.properties
+```
+
+or
+
+```
+.env
+```
+
+Example
+
+```
+OPENWEATHER_API_KEY=YOUR_API_KEY
+```
+
+---
+
+## 📡 REST API Flow
+
+```
+User
+   ↓
+React Frontend
+   ↓
+Spring Boot Backend
+   ↓
+OpenWeatherMap API
+   ↓
+Weather Data
+   ↓
+React UI
+```
+
+---
+
+## 🚀 Future Enhancements
+
+- 7-Day Weather Forecast
+- Air Quality Index
+- Weather Maps
+- Voice Search
+- GPS Location Detection
+- Weather Alerts
+- Dark Mode
+- User Login
+- Favourite Cities
+- Weather History
+
+---
+
+## 📷 Screenshots
+
+Add screenshots here.
+
+Example
+
+```
+images/homepage.png
+
+images/search-result.png
+```
+
+---
+
+## 💻 Skills Demonstrated
+
+- React.js
+- Java Spring Boot
+- REST API Integration
+- Responsive Web Design
+- HTML
+- CSS
+- JavaScript
+- Git & GitHub
+- Maven
+- Object-Oriented Programming
+- MVC Architecture
+- Error Handling
+
+---
+
+## 📖 Learning Outcomes
+
+- Developed a complete Full Stack application.
+- Integrated external REST APIs.
+- Implemented responsive UI.
+- Built backend services using Spring Boot.
+- Practiced clean code architecture.
+- Improved Git version control workflow.
+
+---
+
+## 👩‍💻 Author
+
+**Geetanjali Khurana**
+
+B.Tech CSE (DevOps & Data Science)
+
+Lovely Professional University
+
+GitHub: https://github.com/geetanjalikhurana
+
+## 📄 License
+
+This project is created for educational and portfolio purposes.
